@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "QYSlideNavigationDelegate.h"
 
 @interface QYSlideNavigationViewController : UIViewController
 
@@ -38,5 +39,9 @@
  The scale by which the text title is scaled. Default is 1.2f.
  */
 @property (nonatomic, assign) CGFloat makeScale;
+/**
+ QYSlideNavigationDelegate
+ */
+@property(nonatomic, weak) id<QYSlideNavigationDelegate> delegate;
 
 @end

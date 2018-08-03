@@ -40,12 +40,13 @@ static CGFloat const kTitle_H = 44.f;
 #pragma mark - event
 - (void)titleButtonClick:(UIButton *)sender {
     [self currentSelectedTitleButton:sender];
-    NSInteger index = sender.tag-1000;
+    NSUInteger index = sender.tag-1000;
     CGFloat offset_x  = index * kScreenWidth;
     self.controllerScrollView.contentOffset = CGPointMake(offset_x, 0);
     [self addControllerViewWithIndex:index];
+    [self seletedViewControllerWithIndex:index];
 }
-- (void)addControllerViewWithIndex:(NSInteger)index {
+- (void)addControllerViewWithIndex:(NSUInteger)index {
     if (index >= self.childViewControllers.count) return;
     CGFloat origin_x  = index * kScreenWidth;
     UIViewController *vc = self.childViewControllers[index];
@@ -70,16 +71,25 @@ static CGFloat const kTitle_H = 44.f;
     [self.titleScrollView setContentOffset:CGPointMake(offset_x, 0) animated:YES];
 }
 
+#pragma mark - QYSlideNavigationDelegate
+- (void)seletedViewControllerWithIndex:(NSUInteger)index {
+    if (index >= self.childViewControllers.count) return;
+    if ([self.delegate respondsToSelector:@selector(selectedViewController:index:)]) {
+        [self.delegate selectedViewController:self.childViewControllers[index] index:index];
+    }
+}
+
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    NSInteger index  = self.controllerScrollView.contentOffset.x / kScreenWidth;
+    NSUInteger index  = self.controllerScrollView.contentOffset.x / kScreenWidth;
     UIButton *selectedBtn = (UIButton *)[self.titleScrollView viewWithTag:(index+1000)];
     if (selectedBtn) [self currentSelectedTitleButton:selectedBtn];
     [self addControllerViewWithIndex:index];
+    [self seletedViewControllerWithIndex:index];
 }
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (_makeScale == 1) return;
-    NSInteger index  = scrollView.contentOffset.x / kScreenWidth;
+    NSUInteger index  = scrollView.contentOffset.x / kScreenWidth;
     if (index >= (self.titleItems.count-1)) return;
     UIButton *leftButton = (UIButton *)[self.titleScrollView viewWithTag:(index+1000)];
     UIButton *rightButton = (UIButton *)[self.titleScrollView viewWithTag:(index+1+1000)];
